@@ -18,7 +18,7 @@ function iniciarJuego()
 	//esta funcion se llama cuando termina de cargar el html
 	//
 	//
-	//aqui llamamos los elementos html
+	//
 	botonMascotaJugador = document.getElementById("boton-mascota");
 	botonMascotaJugador.addEventListener('click',seleccionarMascotaJugador);
 	botonReiniciar=document.getElementById("reiniciar");
@@ -65,7 +65,6 @@ function ataqueAleatorioEnemigo(){
 	//
 	//
 	let genAtaqueEnemigo=numeroAleatorio(0,2);
-	//alert(`Enemigo ataca con ${setAtaques[genAtaqueEnemigo]}`);
 	ataqueEnemigo=setAtaques[genAtaqueEnemigo];
 	
 }
@@ -88,12 +87,12 @@ function dispararfinal(){
 	if(vidasEnemigo==0){
 		crearMensaje("GANASTE EL JUEGO");
 		disabledbotones(true);
-		botonReiniciar.style.display='block';
+		botonReiniciar.style.display='flex';
 	}
 	else if (vidasJugador==0){
 		crearMensaje("HAS SIDO DERROTADO");
 		disabledbotones(true);
-		botonReiniciar.style.display='block';
+		botonReiniciar.style.display='flex';
 	}
 }
 
@@ -122,7 +121,7 @@ function iniciarMascotas()
 {
 	iniMascotaJugador();
 	iniMascotaEnemigo();
-	seccionAtaque.style.display='block';
+	seccionAtaque.style.display='flex';
 	seccionseleccion.style.display='none';
 }
 
@@ -139,10 +138,12 @@ function iniMascotaEnemigo(){
 
 
 function numeroAleatorio(min, max){
+	//devuelve un numero aleatorio entre min y max
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
 function cambiartextoid(idelement,nuevotexto)
 {
+	//funcion que cambia el texto del elemento de id idelement
 	let outputnombre=document.getElementById(idelement).textContent=nuevotexto;
 }
 function seleccionarmascotaenemigo()
@@ -152,11 +153,13 @@ function seleccionarmascotaenemigo()
 }
 function seleccionarMascotaJugador(id,cadena)
 {
+	//obtengo todas las mascotas
 	let inputMascotas=[];
 	listaMascotas.forEach(elemento =>{
 		inputMascotas.push(document.getElementById(elemento));
 	})
 	
+	//busco la elegida por el usuario
 	let mascotaSeleccion=inputMascotas.find(elemento=>elemento.checked);
 	if (mascotaSeleccion===undefined)
 	{
@@ -164,7 +167,7 @@ function seleccionarMascotaJugador(id,cadena)
 	}
 	else
 	{
-		alert("seleccionaste a "+mascotaSeleccion.id);
+		//alert("seleccionaste a "+mascotaSeleccion.id);
 		cambiartextoid("mascota-jugador",mascotaSeleccion.id);
 		seleccionarmascotaenemigo();
 		iniciarMascotas();
@@ -176,6 +179,7 @@ function reiniciarJuego(){
 }
 
 function disabledbotones(disab){
+	//habilitar o deshabilitar botones de ataque
 	let botonesAtaque=[];
 	setAtaques.forEach(elemento =>botonesAtaque.push(document.getElementById(elemento)));
 	botonesAtaque.forEach(elemento =>elemento.disabled=disab);
