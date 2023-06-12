@@ -1,5 +1,4 @@
 ﻿//variables globales
-let listaMascotas=["Hipodoge","Capipepo","Ratigueya","Langostelvis","Tucapalma","Pydos"];
 let mascotaEnemigo="undefined";
 let setAtaques=["Fuego","Agua","Tierra"];
 let ataqueJugador="undefined";
@@ -10,7 +9,26 @@ let botonMascotaJugador;
 let botonReiniciar;
 let seccionAtaque;
 let seccionmjes;
+let ataquesJugador;
+let ataquesEnemigo;
 let seccionseleccion;
+
+class Mokepon{
+
+	constructor(nombre,foto,vida){
+		this.nombre=nombre;
+		this.foto=foto;
+		this.vida=vida;
+	}
+}
+
+let listaMascotas=[new Mokepon("Hipodoge","assets/hipodoge.webp",3),
+new Mokepon("Capipepo","assets/capipepo.webp",3),
+new Mokepon("Ratigueya","assets/ratigueya.webp",3),
+new Mokepon("Langostelvis","assets/hipodoge.webp",3),
+new Mokepon("Tucapalma","assets/hipodoge.webp",3),
+new Mokepon("Pydos","assets/hipodoge.webp",3)
+];
 
 function iniciarJuego()
 {
@@ -26,7 +44,9 @@ function iniciarJuego()
 	botonReiniciar.style.display='none';
 	seccionAtaque=document.getElementById("seleccionar-ataque");
 	seccionAtaque.style.display='none';
-	seccionmjes=document.getElementById("mensajes");
+	seccionmjes=document.querySelector("#resultado p");
+	ataquesJugador=document.getElementById("ataqueJugador");
+	ataquesEnemigo=document.getElementById("ataqueEnemigo");
 	seccionseleccion=document.getElementById("seleccionar-mascota");
 }
 
@@ -103,9 +123,15 @@ function crearMensaje(mje){
 	//
 	//
 
-	let parrafo=document.createElement("p");
-	parrafo.innerText=mje;
-	seccionmjes.appendChild(parrafo);
+	/* let parrafo=document.createElement("p"); */
+	let nuevoAtaquejugador=document.createElement("p");
+	let nuevoAtaqueEnemigo=document.createElement("p");
+	seccionmjes.innerText=mje;
+	nuevoAtaquejugador.innerText=ataqueJugador;
+	nuevoAtaqueEnemigo.innerText=ataqueEnemigo;
+	/* seccionmjes.appendChild(parrafo); */
+	ataquesJugador.appendChild(nuevoAtaquejugador);
+	ataquesEnemigo.appendChild(nuevoAtaqueEnemigo);
 }
 
 function crearMensajeAtaque(resultado){
@@ -114,7 +140,8 @@ function crearMensajeAtaque(resultado){
 	//se va a llamar con cualquier accion
 	//
 	//
-	crearMensaje(`Tu mascota atacó con ${ataqueJugador}. Mascota enemiga atacó con ${ataqueEnemigo} - ${resultado}`);
+	/* crearMensaje(`Tu mascota atacó con ${ataqueJugador}. Mascota enemiga atacó con ${ataqueEnemigo} - ${resultado}`); */
+	crearMensaje(`${resultado}`);
 }
 
 function iniciarMascotas()
@@ -156,7 +183,7 @@ function seleccionarMascotaJugador(id,cadena)
 	//obtengo todas las mascotas
 	let inputMascotas=[];
 	listaMascotas.forEach(elemento =>{
-		inputMascotas.push(document.getElementById(elemento));
+		inputMascotas.push(document.getElementById(elemento.nombre));
 	})
 	
 	//busco la elegida por el usuario
