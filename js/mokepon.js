@@ -115,7 +115,7 @@ function ataqueAleatorioEnemigo(){
 	//
 	//
 	let genAtaqueEnemigo=numeroAleatorio(0,mascotaEnemigo.ataques.length-1);
-	ataqueEnemigo=mascotaEnemigo.ataque[genAtaqueEnemigo];
+	ataqueEnemigo=mascotaEnemigo.ataques[genAtaqueEnemigo];
 	
 }
 
@@ -157,8 +157,8 @@ function crearMensaje(mje){
 	let nuevoAtaquejugador=document.createElement("p");
 	let nuevoAtaqueEnemigo=document.createElement("p");
 	seccionmjes.innerText=mje;
-	nuevoAtaquejugador.innerText=ataqueJugador;
-	nuevoAtaqueEnemigo.innerText=ataqueEnemigo;
+	nuevoAtaquejugador.innerText=ataqueJugador.nombre;
+	nuevoAtaqueEnemigo.innerText=ataqueEnemigo.nombre;
 	/* seccionmjes.appendChild(parrafo); */
 	ataquesJugador.appendChild(nuevoAtaquejugador);
 	ataquesEnemigo.appendChild(nuevoAtaqueEnemigo);
@@ -247,8 +247,8 @@ function cambiartextoid(idelement,nuevotexto)
 }
 function seleccionarmascotaenemigo()
 {
-	mascotaEnemigo=listaMascotas[numeroAleatorio(0,5)];
-	cambiartextoid("mascota-enemigo",mascotaEnemigo);
+	mascotaEnemigo=listaMascotas[numeroAleatorio(0,listaMascotas.length-1)];
+	cambiartextoid("mascota-enemigo",mascotaEnemigo.nombre);
 }
 function seleccionarMascotaJugador(id,cadena)
 {
@@ -282,9 +282,9 @@ function reiniciarJuego(){
 
 function disabledbotones(disab){
 	//habilitar o deshabilitar botones de ataque
-	let botonesAtaque=[];
-	setAtaques.forEach(elemento =>botonesAtaque.push(document.getElementById(elemento.id)));
-	botonesAtaque.forEach(elemento =>elemento.disabled=disab);
+	mascotaJugador.ataques.forEach(ataque=>{
+		document.getElementById(ataque.id).disabled=disab;
+	});
 }
 
 
