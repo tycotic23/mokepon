@@ -1,6 +1,6 @@
 ﻿//variables globales
 let mascotaEnemigo="undefined";
-let setAtaques=["Fuego","Agua","Tierra"];
+let mascotaJugador="undefined";
 let ataqueJugador="undefined";
 let ataqueEnemigo="undefined";
 let vidasJugador=3;
@@ -12,22 +12,46 @@ let seccionmjes;
 let ataquesJugador;
 let ataquesEnemigo;
 let seccionseleccion;
+let contenedorTarjetas;
+let contenedorBotonesAtaque;
 
-class Mokepon{
-
-	constructor(nombre,foto,vida){
+class AtaqueMokepon{
+	constructor(id,nombre){
+		this.id=id;
 		this.nombre=nombre;
-		this.foto=foto;
-		this.vida=vida;
 	}
 }
 
-let listaMascotas=[new Mokepon("Hipodoge","assets/hipodoge.webp",3),
-new Mokepon("Capipepo","assets/capipepo.webp",3),
-new Mokepon("Ratigueya","assets/ratigueya.webp",3),
-new Mokepon("Langostelvis","assets/hipodoge.webp",3),
-new Mokepon("Tucapalma","assets/hipodoge.webp",3),
-new Mokepon("Pydos","assets/hipodoge.webp",3)
+let setAtaques=[
+	new AtaqueMokepon("Basico","Basico 🐾"),
+	new AtaqueMokepon("Fuego1","Fuego1 🔥"),
+	new AtaqueMokepon("Fuego2","Fuego2 🔥"),
+	new AtaqueMokepon("Fuego3","Fuego3 🔥"),
+	new AtaqueMokepon("Agua1","Agua1 💧"),
+	new AtaqueMokepon("Agua2","Agua2 💧"),
+	new AtaqueMokepon("Agua3","Agua3 💧"),
+	new AtaqueMokepon("Tierra1","Tierra1 🌱"),
+	new AtaqueMokepon("Tierra2","Tierra2 🌱"),
+	new AtaqueMokepon("Tierra3","Tierra3 🌱"),
+];
+
+class Mokepon{
+
+	constructor(nombre,foto,vida,elemento,ataques){
+		this.nombre=nombre;
+		this.foto=foto;
+		this.vida=vida;
+		this.ataques=ataques;
+		this.elemento=elemento;
+	}
+}
+
+let listaMascotas=[new Mokepon("Hipodoge","assets/hipodoge.webp",2,"Agua",[setAtaques[0],setAtaques[1],setAtaques[2]]),
+new Mokepon("Capipepo","assets/capipepo.webp",5,"Tierra",[setAtaques[0],setAtaques[4],setAtaques[5]]),
+new Mokepon("Ratigueya","assets/ratigueya.webp",3,"Fuego",[setAtaques[0],setAtaques[6],setAtaques[7]]),
+new Mokepon("Langostelvis","assets/hipodoge.webp",4,"Agua y Fuego",[setAtaques[0],setAtaques[1],setAtaques[8]]),
+new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],setAtaques[4],setAtaques[9]]),
+new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
 ];
 
 function iniciarJuego()
@@ -48,6 +72,12 @@ function iniciarJuego()
 	ataquesJugador=document.getElementById("ataqueJugador");
 	ataquesEnemigo=document.getElementById("ataqueEnemigo");
 	seccionseleccion=document.getElementById("seleccionar-mascota");
+	contenedorTarjetas=document.getElementById("contenedor-tarjetas");
+	contenedorBotonesAtaque=document.getElementById("botones-ataque");
+	//crear las tarjetas de mokepones en el DOM
+	listaMascotas.forEach(mokepon=>{
+		agregarTarjetaMokeponDOM(mokepon);
+	});
 }
 
 function comprobar(at1,at2){
@@ -84,8 +114,8 @@ function ataqueAleatorioEnemigo(){
 	//esta funcion se da en respuesta a cada ataque del jugador
 	//
 	//
-	let genAtaqueEnemigo=numeroAleatorio(0,2);
-	ataqueEnemigo=setAtaques[genAtaqueEnemigo];
+	let genAtaqueEnemigo=numeroAleatorio(0,mascotaEnemigo.ataques.length-1);
+	ataqueEnemigo=mascotaEnemigo.ataque[genAtaqueEnemigo];
 	
 }
 
@@ -153,14 +183,56 @@ function iniciarMascotas()
 }
 
 function iniMascotaJugador(){
-	//obtener set de ataques de la mascota y obtener el control de sus botones
-	let botonesAtaque=[];
-	setAtaques.forEach(elemento =>botonesAtaque.push(document.getElementById(elemento)));
-	botonesAtaque.forEach(elemento =>elemento.addEventListener('click',function(){fdeataque(elemento.id);}));
+	//agrega los botones de ataque al dom
+	iniBotonesAtaque(); 
+	//toma la vida inicial de la mascota
+	vidasJugador=mascotaJugador.vida;
+}
+
+function iniBotonesAtaque(){
+	mascotaJugador.ataques.forEach(ataque=>{
+		agregarBotonAtaqueDOM(ataque);
+	});
+	
+}
+
+function agregarBotonAtaqueDOM(ataque){
+	//agrega al elemento que contiene los botones de ataque los ataques del mokepon elegido por el jugador
+	let buttonc=document.createElement("button");
+	buttonc.setAttribute("class","atack-button");
+	buttonc.setAttribute("name","mascota");
+	buttonc.setAttribute("id",ataque.id);
+	let pc=document.createElement("p");
+	pc.appendChild(document.createTextNode(ataque.nombre));
+	buttonc.appendChild(pc);
+	buttonc.addEventListener('click',function(){fdeataque(ataque)});
+	contenedorBotonesAtaque.appendChild(buttonc);
+	
+}
+
+function agregarTarjetaMokeponDOM(mokepon){
+	//agrega una tarjeta de mokepon al elemento que contiene las tarjetas
+	let inputc=document.createElement("input");
+	inputc.setAttribute("type","radio");
+	inputc.setAttribute("name","mascota");
+	inputc.setAttribute("id",mokepon.nombre);
+	contenedorTarjetas.appendChild(inputc);
+	let labelc=document.createElement("label");
+	labelc.setAttribute("class","tarjeta-mokepon");
+	labelc.setAttribute("for",mokepon.nombre);
+	let imgc=document.createElement("img");
+	imgc.setAttribute("src",mokepon.foto);
+	imgc.setAttribute("alt",mokepon.nombre);
+	labelc.appendChild(imgc);
+	let pc=document.createElement("p");
+	pc.appendChild(document.createTextNode(mokepon.elemento));
+	labelc.appendChild(pc);
+	contenedorTarjetas.appendChild(labelc);
 }
 
 function iniMascotaEnemigo(){
-
+//toma la vida inicial de la mascota
+vidasEnemigo=mascotaEnemigo.vida;
 }
 
 
@@ -194,8 +266,11 @@ function seleccionarMascotaJugador(id,cadena)
 	}
 	else
 	{
+		
 		//alert("seleccionaste a "+mascotaSeleccion.id);
 		cambiartextoid("mascota-jugador",mascotaSeleccion.id);
+		//ahora que ya revisamos la seleccion le damos valor de mokepon a "mascotajugador"
+		mascotaJugador=listaMascotas.find(m=>m.nombre==mascotaSeleccion.id);
 		seleccionarmascotaenemigo();
 		iniciarMascotas();
 	}
@@ -208,7 +283,7 @@ function reiniciarJuego(){
 function disabledbotones(disab){
 	//habilitar o deshabilitar botones de ataque
 	let botonesAtaque=[];
-	setAtaques.forEach(elemento =>botonesAtaque.push(document.getElementById(elemento)));
+	setAtaques.forEach(elemento =>botonesAtaque.push(document.getElementById(elemento.id)));
 	botonesAtaque.forEach(elemento =>elemento.disabled=disab);
 }
 
