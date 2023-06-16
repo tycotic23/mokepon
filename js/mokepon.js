@@ -14,6 +14,11 @@ let ataquesEnemigo;
 let seccionseleccion;
 let contenedorTarjetas;
 let contenedorBotonesAtaque;
+let mapa;
+let seccionMapa;
+let lienzo;
+
+//clases de ataque y mokepones
 
 class AtaqueMokepon{
 	constructor(id,nombre){
@@ -78,6 +83,11 @@ function iniciarJuego()
 	listaMascotas.forEach(mokepon=>{
 		agregarTarjetaMokeponDOM(mokepon);
 	});
+	//cargando el canvas
+	mapa=document.getElementById("mapa");
+	seccionMapa=document.getElementById("ver-mapa");
+	seccionMapa.style.display='none';
+	lienzo=mapa.getContext("2d");
 }
 
 function comprobar(at1,at2){
@@ -179,7 +189,12 @@ function iniciarMascotas()
 	iniMascotaJugador();
 	iniMascotaEnemigo();
 	seccionAtaque.style.display='flex';
+	seccionMapa.style.display="flex";
 	seccionseleccion.style.display='none';
+	//cargando mokepones en el mapa
+	let imagen=new Image();
+	imagen.src=mascotaJugador.foto;
+	lienzo.drawImage(imagen,50,40,100,100);
 }
 
 function iniMascotaJugador(){
