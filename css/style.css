@@ -202,3 +202,26 @@ input:checked + label{
     background-color: yellow;
 }
 
+#grid-controles{
+    display:grid;
+    grid-template: ". ar ." 1fr "izq ab der" 1fr/1fr 1fr 1fr;
+}
+
+#grid-controles button{
+    width: 100px;
+    height: 100px;
+    padding: 0;
+}
+
+#boton-arriba{
+    grid-area:ar;
+}
+#boton-derecha{
+    grid-area:der;
+}
+#boton-abajo{
+    grid-area:ab;
+}
+#boton-izquierda{
+    grid-area:izq;
+}

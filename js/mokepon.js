@@ -17,6 +17,10 @@ let contenedorBotonesAtaque;
 let mapa;
 let seccionMapa;
 let lienzo;
+let botonControlDerecha;
+let botonControlIzquierda;
+let botonControlArriba;
+let botonControlAbajo;
 
 //clases de ataque y mokepones
 
@@ -48,6 +52,23 @@ class Mokepon{
 		this.vida=vida;
 		this.ataques=ataques;
 		this.elemento=elemento;
+		this.x=20;
+		this.y=30;
+		this.ancho=80;
+		this.alto=80;
+		this.mapaFoto=new Image();
+		this.mapaFoto.src=foto;
+	}
+
+	pintarPersonaje(canva){
+		canva.clearRect(0,0,mapa.width,mapa.height);
+		canva.drawImage(this.mapaFoto,this.x,this.y,this.ancho,this.alto);
+	}
+
+	moverPersonaje(canva,x,y){
+		this.x+=x;
+		this.y+=y;
+		this.pintarPersonaje(canva);
 	}
 }
 
@@ -88,6 +109,15 @@ function iniciarJuego()
 	seccionMapa=document.getElementById("ver-mapa");
 	seccionMapa.style.display='none';
 	lienzo=mapa.getContext("2d");
+	//controles
+	botonControlDerecha=document.getElementById("boton-derecha");
+	botonControlDerecha.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,5,0)});
+	botonControlIzquierda=document.getElementById("boton-izquierda");;
+ 	botonControlArriba=document.getElementById("boton-arriba");;
+ 	botonControlAbajo=document.getElementById("boton-abajo");;
+ 	botonControlIzquierda.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,-5,0)});;
+ 	botonControlArriba.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,0,-5)});;
+ 	botonControlAbajo.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,0,5)});;
 }
 
 function comprobar(at1,at2){
@@ -192,9 +222,10 @@ function iniciarMascotas()
 	seccionMapa.style.display="flex";
 	seccionseleccion.style.display='none';
 	//cargando mokepones en el mapa
-	let imagen=new Image();
-	imagen.src=mascotaJugador.foto;
-	lienzo.drawImage(imagen,50,40,100,100);
+	//let imagen=new Image();
+	//imagen.src=mascotaJugador.foto;
+	//lienzo.drawImage(imagen,50,40,100,100);
+	mascotaJugador.pintarPersonaje(lienzo);
 }
 
 function iniMascotaJugador(){
