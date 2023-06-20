@@ -17,10 +17,8 @@ let contenedorBotonesAtaque;
 let mapa;
 let seccionMapa;
 let lienzo;
-let botonControlDerecha;
-let botonControlIzquierda;
-let botonControlArriba;
-let botonControlAbajo;
+let refresh;
+let mapaBK;
 
 //clases de ataque y mokepones
 
@@ -47,28 +45,46 @@ let setAtaques=[
 class Mokepon{
 
 	constructor(nombre,foto,vida,elemento,ataques){
+		//atributos
 		this.nombre=nombre;
 		this.foto=foto;
 		this.vida=vida;
 		this.ataques=ataques;
 		this.elemento=elemento;
+		//canvas
 		this.x=20;
 		this.y=30;
 		this.ancho=80;
 		this.alto=80;
 		this.mapaFoto=new Image();
 		this.mapaFoto.src=foto;
+		//velocidad horizontal y vertical
+		this.vx=0;
+		this.vy=0;
 	}
 
+	//esta funcion que se encarga de dibujar al mokepon es la que va a ser llamada constantemente
 	pintarPersonaje(canva){
-		canva.clearRect(0,0,mapa.width,mapa.height);
+		this.x+=this.vx;
+		this.y+=this.vy;
+		
 		canva.drawImage(this.mapaFoto,this.x,this.y,this.ancho,this.alto);
 	}
 
-	moverPersonaje(canva,x,y){
+	moverPersonaje(dx,dy){
+		this.x+=dx;
+		this.y+=dy;
+
+	}
+
+	tp(x,y){
 		this.x+=x;
 		this.y+=y;
-		this.pintarPersonaje(canva);
+	}
+
+	detenerPersonaje(){
+		this.vx=0;
+		this.vy=0;
 	}
 }
 
@@ -80,6 +96,11 @@ new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],
 new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
 ];
 
+let enemigos=[new Mokepon("Ratigueya enemiga","assets/ratigueyaCabeza.webp",12,"Fuego",[setAtaques[0],setAtaques[1],setAtaques[8]]),
+new Mokepon("Ratigueya enemiga","assets/ratigueyaCabeza.webp",12,"Fuego",[setAtaques[2],setAtaques[6],setAtaques[8]]),
+new Mokepon("Capipepo enemigo","assets/capipepoCabeza.webp",12,"Tierra",[setAtaques[4],setAtaques[1],setAtaques[3]]),
+]
+
 function iniciarJuego()
 {
 	//
@@ -87,6 +108,8 @@ function iniciarJuego()
 	//
 	//
 	//
+	iniciarMapa();
+	//botones
 	botonMascotaJugador = document.getElementById("boton-mascota");
 	botonMascotaJugador.addEventListener('click',seleccionarMascotaJugador);
 	botonReiniciar=document.getElementById("reiniciar");
@@ -104,20 +127,27 @@ function iniciarJuego()
 	listaMascotas.forEach(mokepon=>{
 		agregarTarjetaMokeponDOM(mokepon);
 	});
-	//cargando el canvas
-	mapa=document.getElementById("mapa");
-	seccionMapa=document.getElementById("ver-mapa");
-	seccionMapa.style.display='none';
-	lienzo=mapa.getContext("2d");
-	//controles
-	botonControlDerecha=document.getElementById("boton-derecha");
-	botonControlDerecha.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,5,0)});
-	botonControlIzquierda=document.getElementById("boton-izquierda");;
- 	botonControlArriba=document.getElementById("boton-arriba");;
- 	botonControlAbajo=document.getElementById("boton-abajo");;
- 	botonControlIzquierda.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,-5,0)});;
- 	botonControlArriba.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,0,-5)});;
- 	botonControlAbajo.addEventListener('click',()=>{mascotaJugador.moverPersonaje(lienzo,0,5)});;
+	
+}
+
+function iniciarMapa(){
+//cargando el canvas
+mapa=document.getElementById("mapa");
+seccionMapa=document.getElementById("ver-mapa");
+seccionMapa.style.display='none';
+lienzo=mapa.getContext("2d");
+//eventos de teclado
+window.addEventListener('keydown',eventKeyDown);
+window.addEventListener('keyup',eventKeyUp);
+//fondo y tamaño
+mapa.width=600;
+mapa.height=500;
+mapaBK=new Image();
+mapaBK.src="assets/mokemap.webp";
+//posicionando enemigos
+enemigos[0].tp(200,300);
+enemigos[1].tp(0,400);
+enemigos[2].tp(300,20);
 }
 
 function comprobar(at1,at2){
@@ -222,10 +252,7 @@ function iniciarMascotas()
 	seccionMapa.style.display="flex";
 	seccionseleccion.style.display='none';
 	//cargando mokepones en el mapa
-	//let imagen=new Image();
-	//imagen.src=mascotaJugador.foto;
-	//lienzo.drawImage(imagen,50,40,100,100);
-	mascotaJugador.pintarPersonaje(lienzo);
+	refresh=setInterval(dibujarMokepones,30);
 }
 
 function iniMascotaJugador(){
@@ -333,5 +360,74 @@ function disabledbotones(disab){
 	});
 }
 
+
+
+//esta funcion se repite constantemente
+function dibujarMokepones(){
+	//borrar dibujo anterior
+	lienzo.clearRect(0,0,mapa.width,mapa.height);
+	//dibujar fondo
+	lienzo.drawImage(mapaBK,0,0,mapa.width,mapa.height);
+	//dibujar jugador
+	mascotaJugador.pintarPersonaje(lienzo);
+	//enemigos
+	enemigos.forEach(en=>en.pintarPersonaje(lienzo));
+}
+
+//controles
+function downRight(){
+	mascotaJugador.vx=3;
+}
+function downLeft(){
+	mascotaJugador.vx=-3;
+}
+function downUp(){
+	mascotaJugador.vy=-3;
+}
+function downDown(){
+	mascotaJugador.vy=3;
+}
+function upKeys(){
+	mascotaJugador.vx=0;
+	mascotaJugador.vy=0;
+}
+
+function eventKeyDown(event){
+	switch(event.key){
+		case 'ArrowUp':
+			event.preventDefault()
+			downUp();
+			break;
+		case 'ArrowDown':
+			event.preventDefault()
+			downDown();
+			break;
+		case 'ArrowLeft':
+			event.preventDefault()
+			downLeft();
+			break;
+		case 'ArrowRight':
+			event.preventDefault()
+			downRight();
+			break;
+	}
+}
+
+function eventKeyUp(event){
+	switch(event.key){
+		case 'ArrowUp':
+			mascotaJugador.vy=0;
+			break;
+		case 'ArrowDown':
+			mascotaJugador.vy=0;
+			break;
+		case 'ArrowLeft':
+			mascotaJugador.vx=0;
+			break;
+		case 'ArrowRight':
+			mascotaJugador.vx=0;
+			break;
+	}
+}
 
 window.addEventListener('load',iniciarJuego);

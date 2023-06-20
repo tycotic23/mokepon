@@ -24,10 +24,10 @@
 			<h2>Recorre el mapa con tu mokepon!</h2>
 			<canvas id="mapa"></canvas>
 			<div id="grid-controles">
-				<button id="boton-arriba">🢁</button>
-				<button id="boton-izquierda">🢀</button>
-				<button id="boton-abajo">🢃</button>
-				<button id="boton-derecha">🢂</button>
+				<button onmouseup="upKeys()" onmousedown="downUp()" id="boton-arriba">🢁</button>
+				<button onmouseup="upKeys()" onmousedown="downLeft()" id="boton-izquierda">🢀</button>
+				<button onmouseup="upKeys()" onmousedown="downDown()" id="boton-abajo">🢃</button>
+				<button onmouseup="upKeys()" onmousedown="downRight()"  id="boton-derecha">🢂</button>
 			</div>
 			
 		</section>
