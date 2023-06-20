@@ -34,13 +34,22 @@
 	}
 
 	tp(x,y){
-		this.x+=x;
-		this.y+=y;
+		this.x=x;
+		this.y=y;
 	}
 
 	detenerPersonaje(){
 		this.vx=0;
 		this.vy=0;
+	}
+
+	retroceder(){
+		this.x-=this.vx;
+		this.y-=this.vy;
+	}
+
+	estaEnMovimiento(){
+		return this.vy!=0 || this.vx!=0;
 	}
 }
 

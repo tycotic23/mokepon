@@ -3,6 +3,7 @@ let mascotaJugador="undefined";
 let ataqueJugador="undefined";
 let ataqueEnemigo="undefined";
 let refresh;
+let colaEnemigos=[];
 
 let setAtaques=[
 	new ataqueMokepon("Basico","Basico 🐾"),
@@ -25,10 +26,13 @@ new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],
 new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
 ];
 
-let enemigos=[new Mokepon("Ratigueya enemiga","assets/ratigueyaCabeza.png",12,"Fuego",[setAtaques[0],setAtaques[1],setAtaques[8]]),
-new Mokepon("Ratigueya enemiga","assets/ratigueyaCabeza.png",12,"Fuego",[setAtaques[2],setAtaques[6],setAtaques[8]]),
-new Mokepon("Capipepo enemigo","assets/capipepoCabeza.png",12,"Tierra",[setAtaques[4],setAtaques[1],setAtaques[3]]),
-]
+let enemigos=[
+    new RatigueyaEnemigo(200,300),
+    new RatigueyaEnemigo(0,400),
+    new CapipepoEnemigo(300,20),
+    new HipodogeEnemigo(50,200),
+];
+
 
 
 window.addEventListener('load',iniciarJuego);
@@ -65,6 +69,11 @@ function seleccionarmascotaenemigo(){
 	mascotaEnemigo=listaMascotas[numeroAleatorio(0,listaMascotas.length-1)];
 	cambiartextoid("mascota-enemigo",mascotaEnemigo.nombre);
 }
+
+function cambiarMascotaEnemigaActiva(nuevoenemigo){
+	mascotaEnemigo=nuevoenemigo;
+	cambiartextoid("mascota-enemigo",mascotaEnemigo.nombre);
+}
 function seleccionarMascotaJugador(){
     //se llama al tocar el boton de seleccionar mascota
 
@@ -79,10 +88,10 @@ function seleccionarMascotaJugador(){
 	else
 	{
 		
-		cambiartextoid("mascota-jugador",mascotaSeleccion.id);
+		cambiartextoid("mascota-jugador",mascotaSeleccion);
 		//ahora que ya revisamos la seleccion le damos valor de mokepon a "mascotajugador"
 		mascotaJugador=listaMascotas.find(m=>m.nombre==mascotaSeleccion);
-		seleccionarmascotaenemigo();
+		//seleccionarmascotaenemigo();
 		iniciarMascotas();
 	}
 }
@@ -90,16 +99,29 @@ function seleccionarMascotaJugador(){
 function iniciarMascotas()
 {
     //si se selecciono una mascota válida se modifican las secciones visibles y da comienzo al juego
-
-	iniMascotaJugador();
-	iniMascotaEnemigo();
+    iniBotonesAtaque();
 	prepararMapa();
 	//cargando mokepones en el mapa
-	refresh=setInterval(dibujarMokepones,30);
+	refresh=setInterval(loopGame,30);
 }
 
 
 //esta funcion se repite constantemente
+function loopGame(){
+    dibujarMokepones();
+    if(mascotaJugador.estaEnMovimiento()){
+        let encolision=revisarColisiones();
+        if (encolision.length>0){
+            //detener movimiento
+            mascotaJugador.retroceder();
+            mascotaJugador.detenerPersonaje();
+            //entrar en combate de a uno
+            iniciarBatalla(encolision);
+        }
+    }
+}
+
+
 function dibujarMokepones(){
 	//borrar dibujo anterior
 	lienzo.clearRect(0,0,mapa.width,mapa.height);
@@ -111,8 +133,23 @@ function dibujarMokepones(){
 	enemigos.forEach(en=>en.pintarPersonaje(lienzo));
 }
 
+function revisarColisiones(){
+    //devuelve un array con los enemigos con los que el jugador entre en colision
+    return enemigos.filter(e=>isColision(mascotaJugador,e));
+}
+
 function reiniciarJuego(){
 	location.reload();
+}
+
+function iniciarBatalla(enemigos){
+    
+    //pongo todos los enemigos en cola para batallar uno a uno
+    colaEnemigos=enemigos;
+    //tomo el primer enemigo y lo convierto en el activo, lo elimino del array
+    cambiarMascotaEnemigaActiva(colaEnemigos.shift());
+    //muestro el area de batalla y oculto el mapa
+    prepararAreaDeBatalla();
 }
 
 function fdeataque(ataque)
@@ -155,7 +192,10 @@ function quitarvidas(resultado){
 function dispararfinal(){
 	//revisa la cantidad de vidas de ambos jugadores y si alguno es cero devuelve el resultado
 	if(mascotaEnemigo.vida==0){
-        mostrarfasefinal("GANASTE EL JUEGO")
+        if (enemigos.length>0)
+            volverMapa();
+        else
+            mostrarfasefinal("GANASTE EL JUEGO")
 	}
 	else if (mascotaJugador.vida==0){
         mostrarfasefinal("HAS SIDO DERROTADO")
@@ -184,8 +224,17 @@ function numeroAleatorio(min, max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
 
- function iniMascotaEnemigo(){
-    //toma la vida inicial de la mascota
-    //vidasEnemigo=mascotaEnemigo.vida;
+function isColision(a,b){
+    //revisa la colision entre dos objetos con parametros x,y,ancho y alto. 
+    //devuelve true si hay colision o false si no la hay
+    if(a.y+a.alto<b.y)
+    return false;
+    if(a.y>b.y+b.alto)
+    return false;
+    if(a.x>b.x+b.ancho)
+    return false;
+    if(a.x+a.ancho<b.x)
+    return false;
+    return true;
+}
 
-} 

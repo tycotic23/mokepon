@@ -27,10 +27,7 @@ function iniciarMapa(){
     mapa.height=500;
     mapaBK=new Image();
     mapaBK.src="assets/mokemap.webp";
-    //posicionando enemigos
-    enemigos[0].tp(200,300);
-    enemigos[1].tp(0,400);
-    enemigos[2].tp(300,20);
+   
 }
 
 
@@ -101,17 +98,33 @@ function crearMensajeAtaque(resultado){
 
 function prepararMapa(){
     //esconde la seccion de seleccion y muestra el mapa y controles
-    seccionAtaque.style.display='flex';
 	seccionMapa.style.display="flex";
 	seccionseleccion.style.display='none';
 }
 
-function iniMascotaJugador(){
-	//agrega los botones de ataque al dom
-	iniBotonesAtaque(); 
-	//toma la vida inicial de la mascota
-	vidasJugador=mascotaJugador.vida;
+function prepararAreaDeBatalla(){
+    //esconde el mapa y muestra la batalla con los contrles
+    seccionAtaque.style.display='flex';
+	seccionMapa.style.display="none";
+    //poner las vidas de ambos jugadores
+    cambiartextoid("vidas-jugador",mascotaJugador.vida);
+    cambiartextoid("vidas-enemigo",mascotaEnemigo.vida);
 }
+function volverMapa(){
+    //esconde el mapa y muestra la batalla con los contrles
+    seccionAtaque.style.display='none';
+	seccionMapa.style.display="flex";
+    //quitar los mensajes de ataque anteriores
+    vaciarElementoDOM(ataquesJugador);
+    vaciarElementoDOM(ataquesEnemigo);
+}
+
+function vaciarElementoDOM(elemento){
+    while (elemento.firstChild){
+        elemento.removeChild(elemento.firstChild);
+      };
+}
+
 
 function iniBotonesAtaque(){
 	mascotaJugador.ataques.forEach(ataque=>{
