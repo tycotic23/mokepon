@@ -1,0 +1,19 @@
+{
+  "name": "mokepon",
+  "version": "1.0.0",
+  "description": "proyecto mokepon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tycotic23/mokepon.git"
+  },
+  "author": "tomas stevan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tycotic23/mokepon/issues"
+  },
+  "homepage": "https://github.com/tycotic23/mokepon#readme"
+}
