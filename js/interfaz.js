@@ -23,11 +23,10 @@ function iniciarMapa(){
     window.addEventListener('keydown',eventKeyDown);
     window.addEventListener('keyup',eventKeyUp);
     //fondo y tamaño
-    mapa.width=600;
-    mapa.height=500;
+    mapa.width=(window.innerWidth>1200)?1200:window.innerWidth-100;
+    mapa.height=mapa.width*1080/1920; //para mantener la relacion de aspecto de 1920x1080
     mapaBK=new Image();
     mapaBK.src="assets/mokemap.webp";
-   
 }
 
 

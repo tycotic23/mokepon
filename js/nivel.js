@@ -4,6 +4,7 @@ let ataqueJugador="undefined";
 let ataqueEnemigo="undefined";
 let refresh;
 let colaEnemigos=[];
+let enemigos=[];
 
 let setAtaques=[
 	new ataqueMokepon("Basico","Basico 🐾"),
@@ -26,12 +27,7 @@ new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],
 new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
 ];
 
-let enemigos=[
-    new RatigueyaEnemigo(200,300),
-    new RatigueyaEnemigo(0,400),
-    new CapipepoEnemigo(300,20),
-    new HipodogeEnemigo(50,200),
-];
+
 
 
 
@@ -46,6 +42,7 @@ function iniciarJuego()
 	//
 	//
 	iniciarMapa();
+
 	//botones
 	botonReiniciar=document.getElementById("reiniciar");
 	botonReiniciar.addEventListener('click',reiniciarJuego)
@@ -62,7 +59,17 @@ function iniciarJuego()
 	listaMascotas.forEach(mokepon=>{
 		agregarTarjetaMokeponDOM(mokepon);
 	});
-	
+    //crear enemigos
+    enemigosIniciales();
+}
+
+function enemigosIniciales(){
+    enemigos=[
+        new RatigueyaEnemigo(numeroAleatorio(50,mapa.width-80),numeroAleatorio(0,mapa.height-80)),
+        new RatigueyaEnemigo(numeroAleatorio(50,mapa.width/2),numeroAleatorio(mapa.height/2,mapa.height-80)),
+        new CapipepoEnemigo(numeroAleatorio(mapa.width/2,mapa.width-80),numeroAleatorio(mapa.height/2,mapa.height-80)),
+        new HipodogeEnemigo(numeroAleatorio(50,mapa.width/2),numeroAleatorio(0,mapa.height/2)),
+    ];
 }
 
 function seleccionarmascotaenemigo(){
@@ -102,7 +109,11 @@ function iniciarMascotas()
     iniBotonesAtaque();
 	prepararMapa();
 	//cargando mokepones en el mapa
-	refresh=setInterval(loopGame,30);
+    initLoopGame()
+}
+
+function initLoopGame(){
+    refresh=setInterval(loopGame,30);
 }
 
 
@@ -143,7 +154,8 @@ function reiniciarJuego(){
 }
 
 function iniciarBatalla(enemigos){
-    
+    //detengo el loop de juego
+    clearInterval(refresh);
     //pongo todos los enemigos en cola para batallar uno a uno
     colaEnemigos=enemigos;
     //tomo el primer enemigo y lo convierto en el activo, lo elimino del array
@@ -192,8 +204,10 @@ function quitarvidas(resultado){
 function dispararfinal(){
 	//revisa la cantidad de vidas de ambos jugadores y si alguno es cero devuelve el resultado
 	if(mascotaEnemigo.vida==0){
-        if (enemigos.length>0)
+        if (enemigos.length>0){
             volverMapa();
+            initLoopGame();
+        }
         else
             mostrarfasefinal("GANASTE EL JUEGO")
 	}
