@@ -5,6 +5,7 @@ let ataqueEnemigo="undefined";
 let refresh;
 let colaEnemigos=[];
 let enemigos=[];
+let jugadorID;
 
 let setAtaques=[
 	new ataqueMokepon("Basico","Basico 🐾"),
@@ -61,6 +62,48 @@ function iniciarJuego()
 	});
     //crear enemigos
     enemigosIniciales();
+	//llamar servicio de crear jugador
+	unirseJuego();
+	
+}
+
+function seleccionarMokeponServidor(mascota){
+	fetch(`http://localhost:8080/mokepon/${jugadorID}`,{
+		method:"post",
+		headers:{"Content-Type":"application/json"},
+		body:JSON.stringify({
+			mokepon:mascota.nombre
+		})
+	})
+}
+
+function unirseJuego(){
+	//llama al servicio de unirse al juego y crear un jugador con id random
+	fetch("http://localhost:8080/unirse")
+		.then(function (res){
+			console.log(res)
+			//si la respuesta es correcta
+			if(res.ok){
+				res.text()
+					.then(function(respuesta){
+
+						//devuelve el id de nuestro jugador
+						console.log(respuesta);
+						jugadorID=respuesta;
+					});
+			}
+		});
+}
+
+function actualizarCoordenadas(){
+	fetch(`http://localhost:8080/mokepon/${jugadorID}/posicion`,{
+		method:"post",
+		headers:{"Content-Type":"application/json"},
+		body:JSON.stringify({
+			x:mascotaJugador.x,
+			y:mascotaJugador.y
+		})
+	})
 }
 
 function enemigosIniciales(){
@@ -100,6 +143,8 @@ function seleccionarMascotaJugador(){
 		mascotaJugador=listaMascotas.find(m=>m.nombre==mascotaSeleccion);
 		//seleccionarmascotaenemigo();
 		iniciarMascotas();
+		//seleccionar mokepon en el servidor
+	seleccionarMokeponServidor(mascotaJugador);
 	}
 }
 
@@ -129,6 +174,8 @@ function loopGame(){
             //entrar en combate de a uno
             iniciarBatalla(encolision);
         }
+		//actualizar coordenadas en el servidor
+		actualizarCoordenadas();
     }
 }
 
