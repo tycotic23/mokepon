@@ -2,6 +2,8 @@
 //importar
 const express = require("express");
 const cors=require("cors");
+const Jugador = require('./js/Jugador.js');
+//import Jugador from "./js/Jugador";
 //almacenar la aplicacion, una isntalncia del servidor que estoy utilizando
 const app =express();
 //configurar cors
@@ -12,20 +14,7 @@ app.use(express.json());
 //lista de jugadores
 const jugadores=[];
 
-class Jugador{
-    constructor (id){
-        this.id=id;
-    }
 
-    agregarMokepon(mokepon){
-        this.mokepon=mokepon;
-    }
-
-    actualizarPosicion(x,y){
-        this.x=x;
-        this.y=y;
-    }
-}
 //peticion del usuario
 app.get("/",(req,res)=>{
 	res.send("hola");
@@ -49,6 +38,7 @@ app.post("/mokepon/:jugadorID",(req,res)=>{
     if(jindex>=0){
         jugadores[jindex].agregarMokepon(mokepon);
     }
+    //termina sin devolver respuesta
     res.end();
 });
 
@@ -61,8 +51,12 @@ app.post("/mokepon/:jugadorID/posicion",(req,res)=>{
     if(jindex>=0){
         jugadores[jindex].actualizarPosicion(x,y);
     }
-    console.log(jugadores);
-    res.end();
+    const mokeponesEnemigos=jugadores
+    .filter((jugador)=>jugador.id!=jugadorID);
+    //para devolver un mje, tiene que ser si o si un json
+    res.send({
+        mokeponesEnemigos
+    }); 
 });
 
 //para que el servidor este escuchando en un puerto

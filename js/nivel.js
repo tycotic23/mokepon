@@ -28,6 +28,15 @@ new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],
 new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
 ];
 
+const tiposMokepones={
+	Hipodoge:new Mokepon("Hipodoge","assets/hipodoge.webp",2,"Agua",[setAtaques[0],setAtaques[1],setAtaques[2]]), 
+	Capipepo:new Mokepon("Capipepo","assets/capipepo.webp",5,"Tierra",[setAtaques[0],setAtaques[4],setAtaques[5]]),
+	Ratigueya:new Mokepon("Ratigueya","assets/ratigueya.webp",3,"Fuego",[setAtaques[0],setAtaques[6],setAtaques[7]]),
+	Langostelvis:new Mokepon("Langostelvis","assets/hipodoge.webp",4,"Agua y Fuego",[setAtaques[0],setAtaques[1],setAtaques[8]]),
+	Tucapalma:new Mokepon("Tucapalma","assets/hipodoge.webp",5,"Agua y Tierra",[setAtaques[0],setAtaques[4],setAtaques[9]]),
+	Pydos:new Mokepon("Pydos","assets/hipodoge.webp",2,"Tierra y Fuego",[setAtaques[0],setAtaques[3],setAtaques[5]])
+}
+
 
 
 
@@ -68,10 +77,12 @@ function iniciarJuego()
 }
 
 function seleccionarMokeponServidor(mascota){
+	console.log(mascota);
 	fetch(`http://localhost:8080/mokepon/${jugadorID}`,{
 		method:"post",
 		headers:{"Content-Type":"application/json"},
 		body:JSON.stringify({
+			
 			mokepon:mascota.nombre
 		})
 	})
@@ -104,6 +115,22 @@ function actualizarCoordenadas(){
 			y:mascotaJugador.y
 		})
 	})
+	.then(function(res){
+		if(res.ok){
+			res.json()
+			.then(function({mokeponesEnemigos}){
+				enemigos=[];
+				mokeponesEnemigos.forEach(enemigo=>{
+					let en=tiposMokepones[enemigo.mokepon];
+					console.log("en"+enemigo.mokepon);
+					if(enemigo.mokepon!=undefined){
+						en.tp(enemigo.x,enemigo.y);
+						enemigos.push(en);
+					}
+				});
+			});
+		}
+	});
 }
 
 function enemigosIniciales(){
@@ -165,6 +192,9 @@ function initLoopGame(){
 //esta funcion se repite constantemente
 function loopGame(){
     dibujarMokepones();
+	//actualizar coordenadas en el servidor
+	actualizarCoordenadas();
+	//revisar colisiones
     if(mascotaJugador.estaEnMovimiento()){
         let encolision=revisarColisiones();
         if (encolision.length>0){
@@ -174,8 +204,7 @@ function loopGame(){
             //entrar en combate de a uno
             iniciarBatalla(encolision);
         }
-		//actualizar coordenadas en el servidor
-		actualizarCoordenadas();
+		
     }
 }
 
